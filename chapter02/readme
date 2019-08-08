@@ -1,0 +1,141 @@
+这一章是数据解析
+
+
+----------------Demo06----css的常用选择器-----------------------
+
+Beautiful Soup支持大部分的CSS选择器 [6] ,在 Tag 或 BeautifulSoup 对象的 .select() 方法中传入字符串参数,即可使用CSS选择器的语法找到tag:
+
+soup.select("title")
+# [<title>The Dormouse's story</title>]
+
+soup.select("p nth-of-type(3)")
+# [<p class="story">...</p>]
+通过tag标签逐层查找:
+
+soup.select("body a")
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>,
+#  <a class="sister" href="http://example.com/lacie"  id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+
+soup.select("html head title")
+# [<title>The Dormouse's story</title>]
+
+找到某个tag标签下的直接子标签 [6] :
+soup.select("head > title")
+# [<title>The Dormouse's story</title>]
+
+soup.select("p > a")
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>,
+#  <a class="sister" href="http://example.com/lacie"  id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+
+soup.select("p > a:nth-of-type(2)")
+# [<a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>]
+
+soup.select("p > #link1")
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>]
+
+soup.select("body > a")
+# []
+
+找到该节点同级兄弟节点后面的所有标签:
+soup.select("#link1 ~ .sister")
+# [<a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie"  id="link3">Tillie</a>]
+
+找到该节点同级兄弟节点后面一个标签:
+soup.select("#link1 + .sister")
+# [<a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>]
+
+
+通过CSS的类名查找:
+soup.select(".sister")
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>,
+#  <a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+
+选择 class 属性包含单词 "sister" 的元素
+soup.select("[class~=sister]")
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>,
+#  <a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+
+通过tag的id查找:
+soup.select("#link1")
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>]
+
+soup.select("a#link2")
+# [<a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>]
+通过是否存在某个属性来查找:
+
+soup.select('a[href]')
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>,
+#  <a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+通过属性的值来查找:
+
+soup.select('a[href="http://example.com/elsie"]')
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>]
+
+soup.select('a[href^="http://example.com/"]')
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>,
+#  <a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+
+soup.select('a[href$="tillie"]')
+# [<a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+
+soup.select('a[href*=".com/el"]')
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>]
+通过语言设置来查找:
+
+
+
+-----------strings--strings--stripped_strings---get_text------经过测试，也不是特别的准，-----------
+string 获取某个标签下的非标签字符串，返回来的是一个字符串
+strings 获取某个标签下的子孙非标签字符串，返回来的是一个生成器
+stripped_strings 获取某个标签下的子孙非标签字符串，会去掉空白字符，返回来的是个生成器
+get_text 获取某个标签下的子孙非标签字符串，不是以列表的形式返回，是字符串
+
+
+
+----------------------------------注意这个地方，BeautifulSoup继承了Tag-------------------------------------------------------------
+tr = soup.find("tr")#<class 'bs4.element.Tag'>
+trs = soup.find_all("tr")#<class 'bs4.element.ResultSet'>，每一个元素，就是一个Tag,实际上，ResoutSet，继承了list,
+
+---------------------------------------------------------------------------------
+第一种情况：
+html = """<div><p>1111</p></div>"""
+
+
+soup = BeautifulSoup(html, "lxml")
+p = soup.find("p")
+p.string  #是可以得到内容的
+
+
+
+第一种情况：
+html = """<div>
+    <p>1111</p>
+</div>"""
+
+
+soup = BeautifulSoup(html, "lxml")
+p = soup.find("p")
+p.string  #是不能得到内容的，因为它有多行
+
+可以用这个进行查看
+p.contents  #得到的内容是：list["\n","1111","\n"]
+
+
+
+
+
+
+
+
+
+
+
+
+
